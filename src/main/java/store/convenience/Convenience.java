@@ -1,6 +1,6 @@
 package store.convenience;
 
-import static store.domain.Agree.NO;
+import static store.domain.Agree.YES;
 
 import java.util.List;
 import java.util.Map;
@@ -24,17 +24,12 @@ public class Convenience {
         this.inputView = inputView;
     }
 
-    public void init() {
+    public void operating() {
         repurchase(this::operate);
     }
 
     public void repurchase(Supplier<String> supplier) {
-        while (true) {
-            String rePurchase = supplier.get();
-            if (rePurchase.equals(NO.getValue())) {
-                break;
-            }
-        }
+        while (supplier.get().equals(YES.getValue())) {}
     }
 
     private String operate() {

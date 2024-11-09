@@ -15,7 +15,7 @@ public class StoreFileReader {
     public static final String PRODUCTS_DATA = "src/main/resources/products.md";
     public static final String PROMOTIONS_DATA = "src/main/resources/promotions.md";
 
-    public Map<String, Product> product(Map<String, Promotion> promotions) {
+    public static Map<String, Product> product(Map<String, Promotion> promotions) {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(PRODUCTS_DATA)))) {
             return getProductMap(promotions, br);
         } catch (IOException e) {
@@ -23,7 +23,7 @@ public class StoreFileReader {
         }
     }
 
-    private Map<String, Product> getProductMap(Map<String, Promotion> promotions, BufferedReader br)
+    private static Map<String, Product> getProductMap(Map<String, Promotion> promotions, BufferedReader br)
             throws IOException {
         Map<String, Product> products = new LinkedHashMap<>();
         String line = br.readLine();
@@ -36,14 +36,14 @@ public class StoreFileReader {
         return products;
     }
 
-    private void addProduct(Map<String, Product> products, String productName, String[] product) {
+    private static void addProduct(Map<String, Product> products, String productName, String[] product) {
         if (products.containsKey(productName)) {
             Product p = products.get(productName);
             p.add(Integer.parseInt(product[2]));
         }
     }
 
-    private Product convertProduct(String[] product, Map<String, Promotion> promotions) {
+    private static Product convertProduct(String[] product, Map<String, Promotion> promotions) {
         String name = product[0];
         int price = Integer.parseInt(product[1]);
         int quantity = Integer.parseInt(product[2]);
@@ -54,11 +54,11 @@ public class StoreFileReader {
         return new Product(name, price, quantity);
     }
 
-    private boolean isPromotion(String[] product) {
+    private static boolean isPromotion(String[] product) {
         return !product[3].equals("null");
     }
 
-    public Map<String, Promotion> promotions() {
+    public static Map<String, Promotion> promotions() {
         try (BufferedReader br = new BufferedReader(
                 new InputStreamReader(new FileInputStream(PROMOTIONS_DATA)))) {
             return getPromotionMap(br);
@@ -68,7 +68,7 @@ public class StoreFileReader {
 
     }
 
-    private Map<String, Promotion> getPromotionMap(BufferedReader br) throws IOException {
+    private static Map<String, Promotion> getPromotionMap(BufferedReader br) throws IOException {
         Map<String, Promotion> promotions = new LinkedHashMap<>();
         String line = br.readLine();
         while ((line = br.readLine()) != null) {
@@ -79,7 +79,7 @@ public class StoreFileReader {
         return promotions;
     }
 
-    private Promotion convertPromotion(String[] promotion) {
+    private static Promotion convertPromotion(String[] promotion) {
         return new Promotion(promotion[0], Integer.parseInt(promotion[1]), Integer.parseInt(promotion[2]),
                 LocalDate.parse(promotion[3]), LocalDate.parse(promotion[4]));
     }

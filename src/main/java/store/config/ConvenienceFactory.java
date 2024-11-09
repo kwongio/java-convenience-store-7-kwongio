@@ -36,13 +36,9 @@ public class ConvenienceFactory {
         return new InputView();
     }
 
-    public static StoreFileReader storeFileReader() {
-        return new StoreFileReader();
-    }
-
     public static ProductRepository productRepository() {
-        Map<String, Promotion> promotions = storeFileReader().promotions();
-        Map<String, Product> products = storeFileReader().product(promotions);
+        Map<String, Promotion> promotions = StoreFileReader.promotions();
+        Map<String, Product> products = StoreFileReader.product(promotions);
         return new ProductRepository(products);
     }
 
@@ -55,6 +51,6 @@ public class ConvenienceFactory {
     }
 
     public static PromotionRepository promotionRepository() {
-        return new PromotionRepository(storeFileReader().promotions());
+        return new PromotionRepository(StoreFileReader.promotions());
     }
 }

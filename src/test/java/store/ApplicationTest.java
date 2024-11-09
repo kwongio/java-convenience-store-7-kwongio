@@ -52,13 +52,13 @@ class ApplicationTest extends NsTest {
         }, LocalDate.of(2024, 2, 1).atStartOfDay());
     }
 
-//    @Test
-//    void 예외_테스트() {
-//        assertSimpleTest(() -> {
-//            runException("[컵라면-12]", "N", "N");
-//            assertThat(output()).contains("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
-//        });
-//    }
+    @Test
+    void 예외_테스트() {
+        assertSimpleTest(() -> {
+            runException("[컵라면-12]", "N", "N");
+            assertThat(output()).contains("[ERROR] 재고 수량을 초과하여 구매할 수 없습니다. 다시 입력해 주세요.");
+        });
+    }
 
     @Override
     public void runMain() {

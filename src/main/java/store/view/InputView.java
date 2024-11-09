@@ -10,6 +10,7 @@ import camp.nextstep.edu.missionutils.DateTimes;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import store.config.ErrorMessage;
 import store.domain.Product;
 import store.domain.Promotion;
@@ -30,6 +31,8 @@ public class InputView {
                     .map(product -> product.split("-"))
                     .map(product -> convertToPurchaseRequest(product, products))
                     .toList();
+        } catch (NoSuchElementException e) {
+            throw new NoSuchElementException(e.getMessage(), e);
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
