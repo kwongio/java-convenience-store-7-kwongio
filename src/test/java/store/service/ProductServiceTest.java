@@ -31,4 +31,5 @@ class ProductServiceTest {
             System.out.println(shortageQuantity);
         }
     }
+
 }

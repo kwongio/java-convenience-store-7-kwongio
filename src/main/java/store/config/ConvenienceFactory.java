@@ -20,7 +20,7 @@ public class ConvenienceFactory {
         return new Convenience(convenienceController(), outputView(), inputView());
     }
 
-    private static ConvenienceController convenienceController() {
+    public static ConvenienceController convenienceController() {
         return new ConvenienceController(convenienceService());
     }
 
@@ -28,33 +28,33 @@ public class ConvenienceFactory {
         return new ConvenienceService(productService(), promotionService());
     }
 
-    private static OutputView outputView() {
+    public static OutputView outputView() {
         return new OutputView();
     }
 
-    private static InputView inputView() {
+    public static InputView inputView() {
         return new InputView();
     }
 
-    private static StoreFileReader storeFileReader() {
+    public static StoreFileReader storeFileReader() {
         return new StoreFileReader();
     }
 
-    private static ProductRepository productRepository() {
+    public static ProductRepository productRepository() {
         Map<String, Promotion> promotions = storeFileReader().promotions();
         Map<String, Product> products = storeFileReader().product(promotions);
         return new ProductRepository(products);
     }
 
-    private static ProductService productService() {
+    public static ProductService productService() {
         return new ProductService(productRepository());
     }
 
-    private static PromotionService promotionService() {
+    public static PromotionService promotionService() {
         return new PromotionService(promotionRepository());
     }
 
-    private static PromotionRepository promotionRepository() {
+    public static PromotionRepository promotionRepository() {
         return new PromotionRepository(storeFileReader().promotions());
     }
 }
