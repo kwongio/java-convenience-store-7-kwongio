@@ -47,12 +47,7 @@ public class Convenience {
                 purchases);
 
         for (ShortageQuantity shortageQuantity : shortageQuantityForPromotion) {
-            if (shortageQuantity.isPromotion()) {
-                String promotion = inputView.getPromotion(shortageQuantity);
-                if (promotion.equals("Y")) {
-                    shortageQuantity.getPurchaseRequest().add(shortageQuantity.getQuantity());
-                }
-            }
+            addShortageQuantity(shortageQuantity);
 
             if (!shortageQuantity.isPromotion()) {
                 String notPromotion = inputView.getNotPromotion(shortageQuantity);
@@ -67,6 +62,15 @@ public class Convenience {
 
         outputView.printReceipt(receipt);
         return inputView.inputRePurchase();
+    }
+
+    private void addShortageQuantity(ShortageQuantity shortageQuantity) {
+        if (shortageQuantity.isPromotion()) {
+            String promotion = inputView.getPromotion(shortageQuantity);
+            if (promotion.equals("Y")) {
+                shortageQuantity.getPurchaseRequest().add(shortageQuantity.getQuantity());
+            }
+        }
     }
 
 
