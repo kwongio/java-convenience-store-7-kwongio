@@ -21,23 +21,26 @@ public class StoreFileReader {
         } catch (IOException e) {
             throw new RuntimeException("Failed to read the file.", e);
         }
-
     }
 
-    private Map<String, Product> getProductMap(Map<String, Promotion> promotions, BufferedReader br) throws IOException {
+    private Map<String, Product> getProductMap(Map<String, Promotion> promotions, BufferedReader br)
+            throws IOException {
         Map<String, Product> products = new LinkedHashMap<>();
         String line = br.readLine();
         while ((line = br.readLine()) != null) {
             String[] product = line.split(",");
             String productName = product[0];
-            if (products.containsKey(productName)) {
-                Product p = products.get(productName);
-                int quantity = Integer.parseInt(product[2]);
-                p.add(quantity);
-            }
+            addProduct(products, productName, product);
             products.computeIfAbsent(productName, (k) -> convertProduct(product, promotions));
         }
         return products;
+    }
+
+    private void addProduct(Map<String, Product> products, String productName, String[] product) {
+        if (products.containsKey(productName)) {
+            Product p = products.get(productName);
+            p.add(Integer.parseInt(product[2]));
+        }
     }
 
     private Product convertProduct(String[] product, Map<String, Promotion> promotions) {
@@ -51,7 +54,7 @@ public class StoreFileReader {
         return new Product(name, price, quantity);
     }
 
-    private static boolean isPromotion(String[] product) {
+    private boolean isPromotion(String[] product) {
         return !product[3].equals("null");
     }
 
