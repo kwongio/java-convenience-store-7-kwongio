@@ -1,5 +1,7 @@
 package store.convenience;
 
+import static store.domain.Agree.NO;
+
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -29,7 +31,7 @@ public class Convenience {
     public void repurchase(Supplier<String> supplier) {
         while (true) {
             String rePurchase = supplier.get();
-            if (rePurchase.equals("N")) {
+            if (rePurchase.equals(NO.getValue())) {
                 break;
             }
         }
@@ -65,4 +67,6 @@ public class Convenience {
         outputView.printReceipt(receipt);
         return inputView.inputRePurchase();
     }
+
+
 }

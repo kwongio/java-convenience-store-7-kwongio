@@ -2,6 +2,8 @@ package store.view;
 
 import static store.config.ErrorMessage.PRODUCT_NOT_EXIST;
 import static store.config.ErrorMessage.PRODUCT_QUANTITY_NOT_ENOUGH;
+import static store.domain.Agree.NO;
+import static store.domain.Agree.YES;
 
 import camp.nextstep.edu.missionutils.Console;
 import camp.nextstep.edu.missionutils.DateTimes;
@@ -15,9 +17,6 @@ import store.domain.ShortageQuantity;
 import store.domain.request.PurchaseRequest;
 
 public class InputView {
-
-    public static final String Y = "Y";
-    public static final String N = "N";
 
     public List<PurchaseRequest> inputProductAndQuantity(Map<String, Product> products) {
         return RetryOnInvalidInput.retryOnException(() -> getPurchaseRequests(products));
@@ -97,11 +96,7 @@ public class InputView {
 
     private String getRePurchase() {
         System.out.println("감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
-        String rePurchase = Console.readLine();
-        if (!rePurchase.equals(Y) && !rePurchase.equals(N)) {
-            throw new IllegalArgumentException(ErrorMessage.WRONG_INPUT.getMessage());
-        }
-        return rePurchase;
+        return agree(Console.readLine());
     }
 
     public String getNotPromotion(ShortageQuantity shortageQuantity) {
@@ -118,7 +113,7 @@ public class InputView {
     }
 
     private static String agree(String agree) {
-        if (!agree.equals(Y) && !agree.equals(N)) {
+        if (!agree.equals(YES.getValue()) && !agree.equals(NO.getValue())) {
             throw new IllegalArgumentException(ErrorMessage.WRONG_INPUT.getMessage());
         }
         return agree;

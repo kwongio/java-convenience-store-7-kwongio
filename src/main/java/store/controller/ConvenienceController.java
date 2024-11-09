@@ -32,6 +32,4 @@ public class ConvenienceController {
     public List<ShortageQuantity> getShortageQuantityForPromotion(List<PurchaseRequest> purchases) {
         return convenienceService.getShortageQuantityForPromotion(purchases);
     }
-
-
 }
