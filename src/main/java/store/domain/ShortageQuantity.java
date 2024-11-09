@@ -6,7 +6,7 @@ public class ShortageQuantity {
     private final PurchaseRequest purchaseRequest;
     private final String name;
     private final int quantity;
-    boolean isPromotion; // 프로모션이 되고 부족한 경우 true, 프로모션 재고가 부족한 경우 false
+    boolean isPromotion;
 
     public ShortageQuantity(PurchaseRequest purchaseRequest, String name, int quantity, boolean isPromotion) {
         this.purchaseRequest = purchaseRequest;
@@ -26,7 +26,6 @@ public class ShortageQuantity {
     public int getQuantity() {
         return quantity;
     }
-
 
     public boolean isPromotion() {
         return isPromotion;
