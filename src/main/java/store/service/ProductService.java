@@ -21,7 +21,7 @@ public class ProductService {
     }
 
     public Map<String, Product> getProducts() {
-        return productRepository.getProducts();
+        return productRepository.products();
     }
 
     public List<ShortageQuantity> getShortageQuantityForPromotion(List<PurchaseRequest> purchases) {

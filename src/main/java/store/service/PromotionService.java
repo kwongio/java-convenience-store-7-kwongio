@@ -17,7 +17,7 @@ public class PromotionService {
     }
 
     public Map<String, Promotion> getPromotions() {
-        return promotionRepository.getPromotions();
+        return promotionRepository.promotions();
     }
 
 }
