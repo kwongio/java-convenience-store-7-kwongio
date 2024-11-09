@@ -4,7 +4,7 @@ public class Purchase {
     private final String name;
     private final int quantity;
     private final int price;
-    private int promotionQuantity;
+    private final int promotionQuantity;
 
     public Purchase(String name, int quantity, int price, int promotionQuantity) {
         this.name = name;
