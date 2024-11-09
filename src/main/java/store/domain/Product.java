@@ -1,7 +1,5 @@
 package store.domain;
 
-import camp.nextstep.edu.missionutils.DateTimes;
-
 public class Product {
     private final String name;
     private final int price;
@@ -61,17 +59,10 @@ public class Product {
         this.quantity += quantity;
     }
 
-    public void sell(int quantity) {
-        if (promotion != null && promotion.isRangePromotion(DateTimes.now().toLocalDate())) {
-            this.promotionQuantity -= quantity;
-        } else {
-            this.quantity -= quantity;
-        }
-    }
 
     public int getShortageQuantityForPromotion(int purchaseQuantity) {
         if (promotionQuantity < purchaseQuantity) {
-            return  promotionQuantity % (promotion.getBuy() + promotion.getGet());
+            return promotionQuantity % (promotion.getBuy() + promotion.getGet());
         }
 
         int shortage = purchaseQuantity % (promotion.getBuy() + promotion.getGet());
@@ -79,16 +70,5 @@ public class Product {
             return 0;
         }
         return (promotion.getBuy() + promotion.getGet()) - shortage;
-    }
-
-    public int promotionApplyCount(int purchaseQuantity) {
-        if(promotion == null || !promotion.isRangePromotion(DateTimes.now().toLocalDate())) {
-            return 0;
-        }
-        if (promotionQuantity < purchaseQuantity) {
-            return promotionQuantity / (promotion.getBuy() + promotion.getGet());
-        }
-
-        return purchaseQuantity / (promotion.getGet() + promotion.getBuy());
     }
 }

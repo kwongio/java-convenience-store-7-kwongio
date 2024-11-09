@@ -1,8 +1,8 @@
 package store.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import store.domain.Product;
 import store.domain.ShortageQuantity;
 import store.domain.request.PurchaseRequest;
@@ -25,23 +25,33 @@ public class ProductService {
     }
 
     public List<ShortageQuantity> getShortageQuantityForPromotion(List<PurchaseRequest> purchases) {
-        List<ShortageQuantity> shortageQuantities = new ArrayList<>();
-        for (PurchaseRequest purchase : purchases) {
-            Product product = findProduct(purchase.getName());
-            if (product.getPromotion() == null) {
-                continue;
-            }
-            int quantity = purchase.getQuantity();
-            int shortageQuantityForPromotion = product.getShortageQuantityForPromotion(quantity);
-            if (shortageQuantityForPromotion > 0) {
-                if (product.getPromotionQuantity() < purchase.getQuantity() + shortageQuantityForPromotion) {
-                    shortageQuantities.add(new ShortageQuantity(purchase, product.getName(),
-                            purchase.getQuantity() + shortageQuantityForPromotion - product.getPromotionQuantity(), false));
-                } else {
-                    shortageQuantities.add(new ShortageQuantity(purchase, product.getName(), shortageQuantityForPromotion, true));
-                }
-            }
-        }
-        return shortageQuantities;
+        return getShortageQuantities(purchases);
+    }
+
+    private List<ShortageQuantity> getShortageQuantities(List<PurchaseRequest> purchases) {
+        return purchases.stream()
+                .map(purchase -> {
+                    Product product = findProduct(purchase.getName());
+
+                    if (!product.existsPromotion()) {
+                        return null;
+                    }
+
+                    int quantityRequested = purchase.getQuantity();
+                    int shortageQuantity = product.getShortageQuantityForPromotion(quantityRequested);
+
+                    if (shortageQuantity <= 0) {
+                        return null;
+                    }
+
+                    boolean isSufficient = product.getPromotionQuantity() >= quantityRequested + shortageQuantity;
+                    int actualShortageQuantity = isSufficient
+                            ? shortageQuantity
+                            : quantityRequested + shortageQuantity - product.getPromotionQuantity();
+
+                    return new ShortageQuantity(purchase, product.getName(), actualShortageQuantity, isSufficient);
+                })
+                .filter(Objects::nonNull)
+                .toList();
     }
 }

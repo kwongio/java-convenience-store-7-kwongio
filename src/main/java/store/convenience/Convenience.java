@@ -52,10 +52,11 @@ public class Convenience {
                 if (promotion.equals("Y")) {
                     shortageQuantity.getPurchaseRequest().add(shortageQuantity.getQuantity());
                 }
+            }
 
-            } else {
+            if (!shortageQuantity.isPromotion()) {
                 String notPromotion = inputView.getNotPromotion(shortageQuantity);
-                if(notPromotion.equals("N")) {
+                if (notPromotion.equals("N")) {
                     return "Y";
                 }
             }
