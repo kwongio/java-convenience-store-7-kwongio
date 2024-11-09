@@ -3,30 +3,26 @@ package store.domain;
 import java.util.List;
 
 public class Receipt {
-    private List<Purchase> purchases;
-    private String membership;
-    private int totalMoney;
-    private int totalCount;
-    private int promotionDiscount;
-    private int membershipDiscount;
+    private final List<Purchase> purchases;
+    private final String membership;
+    private final int totalMoney;
+    private final int totalCount;
+    private final int promotionDiscount;
+    private final int membershipDiscount;
 
     public Receipt(List<Purchase> purchases, String membership) {
         this.purchases = purchases;
         this.membership = membership;
-        setting();
-    }
-
-    public void setting() {
         this.totalMoney = totalMoney();
         this.promotionDiscount = promotionDiscount();
         this.totalCount = totalCount();
-        if (membership.equals("Y")) {
-            //초대 30% 할인 8000원 까지
-            this.membershipDiscount = membershipDisCount();
-        }
+        this.membershipDiscount = membershipDisCount(membership);
     }
 
-    private int membershipDisCount() {
+    private int membershipDisCount(String membership) {
+        if (membership.equals(Agree.NO.getValue())) {
+            return 0;
+        }
         return Math.min(8000, (int) ((totalMoney - promotionDiscount) * 0.3));
     }
 
