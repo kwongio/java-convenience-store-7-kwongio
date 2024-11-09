@@ -1,6 +1,5 @@
 package store.service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import store.domain.Product;
@@ -24,16 +23,16 @@ public class ConvenienceService {
     }
 
     private Receipt calculate(List<PurchaseRequest> purchaseRequests, String membership, Map<String, Product> products) {
-        List<Purchase> purchases = new ArrayList<>();
-        //PROMOTION 개수랑, 총 금액이랑 멤버쉽 할인 증정
-        purchaseRequests.forEach(purchaseRequest -> {
-            Product product = products.get(purchaseRequest.getName());
-            int promotionCount = product.promotionApplyCount(purchaseRequest.getQuantity());
-            product.sell(purchaseRequest.getQuantity());
-            purchases.add(
-                    new Purchase(purchaseRequest.getName(), purchaseRequest.getQuantity(), product.getPrice(),
-                            promotionCount));
-        });
+        List<Purchase> purchases = purchaseRequests.stream()
+                .filter(purchaseRequest -> products.containsKey(purchaseRequest.getName()))
+                .map(purchaseRequest -> {
+                    Product product = products.get(purchaseRequest.getName());
+                    return new Purchase(
+                            purchaseRequest.getName(),
+                            purchaseRequest.getQuantity(),
+                            product.getPrice(),
+                            0);
+                }).toList();
         return new Receipt(purchases, membership);
     }
 
@@ -49,6 +48,5 @@ public class ConvenienceService {
     public List<ShortageQuantity> getShortageQuantityForPromotion(List<PurchaseRequest> purchases) {
         return productService.getShortageQuantityForPromotion(purchases);
     }
-
 
 }
