@@ -16,16 +16,17 @@ import store.domain.request.PurchaseRequest;
 
 public class InputView {
 
+    public static final String Y = "Y";
+    public static final String N = "N";
+
     public List<PurchaseRequest> inputProductAndQuantity(Map<String, Product> products) {
         return RetryOnInvalidInput.retryOnException(() -> getPurchaseRequests(products));
     }
 
     private List<PurchaseRequest> getPurchaseRequests(Map<String, Product> products) {
-        // TODO 대괄호 처리해야함
         System.out.println("구매하실 상품명과 수량을 입력해 주세요. (예: [사이다-2],[감자칩-1])");
         try {
-            String input = Console.readLine().replaceAll("[\\[\\]]", "");
-            String[] purchaseProduct = input.split(",");
+            String[] purchaseProduct = extractProduct(Console.readLine());
             return Arrays.stream(purchaseProduct)
                     .map(product -> product.split("-"))
                     .map(product -> convertToPurchaseRequest(product, products))
@@ -35,25 +36,50 @@ public class InputView {
         }
     }
 
+    private static String[] extractProduct(String input) {
+        return input.replaceAll("[\\[\\]]", "").split(",");
+    }
+
     public PurchaseRequest convertToPurchaseRequest(String[] request, Map<String, Product> products) {
         String name = request[0];
         int quantity = Integer.parseInt(request[1]);
 
         Product product = products.get(name);
-        if (product == null) {
-            throw new IllegalStateException(PRODUCT_NOT_EXIST.getMessage());
-        }
+        validateProduct(product, quantity);
 
         Promotion promotion = product.getPromotion();
-        if (promotion != null && promotion.isRangePromotion(DateTimes.now().toLocalDate())) {
+        validatePromotion(promotion, product, quantity);
+
+        return new PurchaseRequest(name, quantity);
+    }
+
+    private static void validatePromotion(Promotion promotion, Product product, int quantity) {
+        if (existsPromotion(promotion)) {
             if (product.getPromotionQuantity() + product.getQuantity() < quantity) {
                 throw new IllegalStateException(PRODUCT_QUANTITY_NOT_ENOUGH.getMessage());
             }
-        } else if (product.getQuantity() < quantity) {
+        }
+    }
+
+    private void validateProduct(Product product, int quantity) {
+        if (isNotFound(product)) {
+            throw new IllegalStateException(PRODUCT_NOT_EXIST.getMessage());
+        }
+        if (notEnoughProduct(product, quantity)) {
             throw new IllegalStateException(PRODUCT_QUANTITY_NOT_ENOUGH.getMessage());
         }
+    }
 
-        return new PurchaseRequest(name, quantity);
+    private static boolean notEnoughProduct(Product product, int quantity) {
+        return product.getQuantity() < quantity;
+    }
+
+    private static boolean existsPromotion(Promotion promotion) {
+        return promotion != null && promotion.isRangePromotion(DateTimes.now().toLocalDate());
+    }
+
+    private boolean isNotFound(Product product) {
+        return product == null;
     }
 
     public String inputMembership() {
@@ -66,17 +92,13 @@ public class InputView {
 
     private String getMemberShip() {
         System.out.println("멤버십 할인을 받으시겠습니까? (Y/N)");
-        String membership = Console.readLine();
-        if (!membership.equals("Y") && !membership.equals("N")) {
-            throw new IllegalArgumentException(ErrorMessage.WRONG_INPUT.getMessage());
-        }
-        return membership;
+        return agree(Console.readLine());
     }
 
     private String getRePurchase() {
         System.out.println("감사합니다. 구매하고 싶은 다른 상품이 있나요? (Y/N)");
         String rePurchase = Console.readLine();
-        if (!rePurchase.equals("Y") && !rePurchase.equals("N")) {
+        if (!rePurchase.equals(Y) && !rePurchase.equals(N)) {
             throw new IllegalArgumentException(ErrorMessage.WRONG_INPUT.getMessage());
         }
         return rePurchase;
@@ -87,10 +109,16 @@ public class InputView {
     }
 
     public String inputNotPromotion(ShortageQuantity shortageQuantity) {
-        System.out.println("현재 " + shortageQuantity.getName() + " " + shortageQuantity.getQuantity()
-                + "개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)");
-        String agree = Console.readLine();
-        if (!agree.equals("Y") && !agree.equals("N")) {
+        System.out.println("현재 " +
+                shortageQuantity.getName() +
+                " " +
+                shortageQuantity.getQuantity() +
+                "개는 프로모션 할인이 적용되지 않습니다. 그래도 구매하시겠습니까? (Y/N)");
+        return agree(Console.readLine());
+    }
+
+    private static String agree(String agree) {
+        if (!agree.equals(Y) && !agree.equals(N)) {
             throw new IllegalArgumentException(ErrorMessage.WRONG_INPUT.getMessage());
         }
         return agree;
@@ -101,14 +129,12 @@ public class InputView {
     }
 
 
-    public String inputPromotion(ShortageQuantity shortageQuantity) {
-//        현재 {상품명}은(는) 1개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)
-        System.out.println("현재 " + shortageQuantity.getName() + "은(는) " + shortageQuantity.getQuantity()
-                + "개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
-        String agree = Console.readLine();
-        if (!agree.equals("Y") && !agree.equals("N")) {
-            throw new IllegalArgumentException(ErrorMessage.WRONG_INPUT.getMessage());
-        }
-        return agree;
+    private String inputPromotion(ShortageQuantity shortageQuantity) {
+        System.out.println("현재 " +
+                shortageQuantity.getName() +
+                "은(는) " +
+                shortageQuantity.getQuantity() +
+                "개를 무료로 더 받을 수 있습니다. 추가하시겠습니까? (Y/N)");
+        return agree(Console.readLine());
     }
 }
