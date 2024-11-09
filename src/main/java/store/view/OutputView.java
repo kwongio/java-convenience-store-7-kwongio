@@ -10,28 +10,32 @@ public class OutputView {
     public void printProducts(Map<String, Product> products) {
         printStart();
         for (Product product : products.values()) {
-            String price = String.format("%,d", product.getPrice());
-
-            if (product.getPromotion() != null) {
-                if (product.getPromotionQuantity() != 0) {
-                    System.out.println(
-                            "- " + product.getName() + " " + price + "원 " + product.getPromotionQuantity()
-                                    + "개 " + product.getPromotion().getName());
-                } else {
-                    System.out.println(
-                            "- " + product.getName() + " " + price + "원 " + "재고 없음 "
-                                    + product.getPromotion().getName());
-                }
+            if(product.existsPromotion()) {
+                System.out.println("- " + getName(product) + " " + getPrice(product) + " " + getPromotionQuantity(product) + " " + getPromotion(product));
             }
-
-            if (product.getQuantity() != 0) {
-                System.out.println(
-                        "- " + product.getName() + " " + price + "원 " + product.getQuantity() + "개");
-            } else {
-                System.out.println("- " + product.getName() + " " + price + "원 " + "재고 없음");
-            }
+            System.out.println("- " + getName(product) + " " + getPrice(product) + " " + getQuantity(product));
         }
         System.out.println();
+    }
+
+    private static String getName(Product product) {
+        return product.getName();
+    }
+
+    private static String getPromotion(Product product) {
+        return product.getPromotion() == null ? "" : product.getPromotion().getName();
+    }
+
+    private static String getPromotionQuantity(Product product) {
+        return product.getPromotionQuantity() == 0 ? "재고 없음" : (product.getPromotionQuantity() + "개");
+    }
+
+    private static String getQuantity(Product product) {
+        return product.getQuantity() == 0 ? "재고 없음" : (product.getQuantity() + "개");
+    }
+
+    private static String getPrice(Product product) {
+        return String.format("%,d원", product.getPrice());
     }
 
     private void printStart() {
@@ -42,18 +46,35 @@ public class OutputView {
 
     public void printReceipt(Receipt receipt) {
         System.out.println("==============W 편의점================");
-        System.out.println("상품명		수량	금액");
-        for (Purchase purchase : receipt.getPurchases()) {
-            System.out.println(purchase.getName() + "		" + purchase.getQuantity() + "	"
-                    + purchase.getPrice() * purchase.getQuantity());
+        printProduct(receipt);
+        printPromotion(receipt);
+        printResult(receipt);
+    }
 
+    private static void printProduct(Receipt receipt) {
+        System.out.println("상품명		수량	금액");
+        StringBuilder product = new StringBuilder();
+        for (Purchase purchase : receipt.getPurchases()) {
+            product.append(purchase.getName())
+                    .append("     ")
+                    .append(purchase.getQuantity())
+                    .append("     ")
+                    .append(purchase.getPrice() * purchase.getQuantity())
+                    .append("\n");
         }
+        System.out.println(product);
+    }
+
+    private static void printPromotion(Receipt receipt) {
         System.out.println("=============증	정===============");
         for (Purchase purchase : receipt.getPurchases()) {
             if (purchase.getPromotionQuantity() != 0) {
                 System.out.println(purchase.getName() + "		" + purchase.getPromotionQuantity());
             }
         }
+    }
+
+    private static void printResult(Receipt receipt) {
         System.out.println("====================================");
         System.out.format("총구매액 %d  %,d원\n", receipt.getTotalCount(), receipt.getTotalMoney());
         System.out.format("행사할인 %,d원\n", receipt.getPromotionDiscount());

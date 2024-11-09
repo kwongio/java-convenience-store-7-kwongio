@@ -42,6 +42,10 @@ public class Product {
         return promotion;
     }
 
+    public boolean existsPromotion() {
+        return promotion != null;
+    }
+
     @Override
     public String toString() {
         return "Product{" +
