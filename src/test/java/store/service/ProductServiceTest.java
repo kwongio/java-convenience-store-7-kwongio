@@ -1,7 +1,5 @@
 package store.service;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,9 +15,8 @@ class ProductServiceTest {
 
     @Test
     void getShortageQuantityForPromotion() {
-        StoreFileReader storeFileReader = new StoreFileReader();
-        Map<String, Promotion> promotions = storeFileReader.promotions();
-        Map<String, Product> product = storeFileReader.product(promotions);
+        Map<String, Promotion> promotions = StoreFileReader.promotions();
+        Map<String, Product> product = StoreFileReader.product(promotions);
         ProductService productService = new ProductService(new ProductRepository(product));
 
         List<PurchaseRequest> purchaseRequests = new ArrayList<>();
